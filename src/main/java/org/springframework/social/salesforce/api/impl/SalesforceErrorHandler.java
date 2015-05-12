@@ -35,15 +35,15 @@ public class SalesforceErrorHandler extends DefaultResponseErrorHandler {
 
     private void handleSalesforceError(HttpStatus statusCode, Map<String, Object> errorDetails) {
         if (statusCode.equals(HttpStatus.NOT_FOUND)) {
-            throw new ResourceNotFoundException(generateMessage(errorDetails));
+            throw new ResourceNotFoundException("salesforce",generateMessage(errorDetails));
         } else if (statusCode.equals(HttpStatus.SERVICE_UNAVAILABLE)) {
-            throw new RateLimitExceededException();
+            throw new RateLimitExceededException("salesforce");
         } else if (statusCode.equals(HttpStatus.INTERNAL_SERVER_ERROR)) {
-            throw new InternalServerErrorException(errorDetails == null ? "Contact Salesforce administrator." : generateMessage(errorDetails));
+            throw new InternalServerErrorException("salesforce", errorDetails == null ? "Contact Salesforce administrator." : generateMessage(errorDetails));
         } else if (statusCode.equals(HttpStatus.BAD_REQUEST)) {
             throw new InvalidIDException(generateMessage(errorDetails));
         } else if (statusCode.equals(HttpStatus.UNAUTHORIZED)) {
-            throw new InvalidAuthorizationException(generateMessage(errorDetails));
+            throw new InvalidAuthorizationException("salesforce",generateMessage(errorDetails));
         } else if (statusCode.equals(HttpStatus.FORBIDDEN)) {
             throw new InsufficientPermissionException(generateMessage(errorDetails));
         }
@@ -54,9 +54,9 @@ public class SalesforceErrorHandler extends DefaultResponseErrorHandler {
             super.handleError(response);
         } catch (Exception e) {
             if (errorDetails != null) {
-                throw new UncategorizedApiException(generateMessage(errorDetails), e);
+                throw new UncategorizedApiException("salesforce", generateMessage(errorDetails), e);
             } else {
-                throw new UncategorizedApiException("No error details from Salesforce.", e);
+                throw new UncategorizedApiException("salesforce","No error details from Salesforce.", e);
             }
         }
     }

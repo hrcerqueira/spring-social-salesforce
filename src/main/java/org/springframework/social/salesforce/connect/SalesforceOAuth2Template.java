@@ -27,12 +27,11 @@ public class SalesforceOAuth2Template extends OAuth2Template {
     }
 
 
-    @Override
-    protected AccessGrant createAccessGrant(String accessToken, String scope, String refreshToken, Integer expiresIn, Map<String, Object> response) {
+    /*protected AccessGrant createAccessGrant(String accessToken, String scope, String refreshToken, Integer expiresIn, Map<String, Object> response) {
         this.instanceUrl = (String) response.get("instance_url");
 
         return super.createAccessGrant(accessToken, scope, refreshToken, expiresIn, response);
-    }
+    }*/
 
     public String getInstanceUrl() {
         return instanceUrl;

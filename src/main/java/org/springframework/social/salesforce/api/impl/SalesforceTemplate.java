@@ -4,12 +4,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.TypeFactory;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.social.UncategorizedApiException;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.oauth2.OAuth2Version;
 import org.springframework.social.salesforce.api.*;
-import org.springframework.social.salesforce.api.impl.json.SalesforceModule;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -27,7 +25,7 @@ public class SalesforceTemplate extends AbstractOAuth2ApiBinding implements Sale
 
     private String instanceUrl;
 
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private ApiOperations apiOperations;
 
@@ -96,14 +94,14 @@ public class SalesforceTemplate extends AbstractOAuth2ApiBinding implements Sale
         sObjectsOperations = new SObjectsTemplate(this, getRestTemplate());
     }
 
-    @Override
+    /*@Override
     protected MappingJacksonHttpMessageConverter getJsonMessageConverter() {
-        MappingJacksonHttpMessageConverter converter = super.getJsonMessageConverter();
-        objectMapper = new ObjectMapper();
+        MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
+        objectMapper = converter.getObjectMapper();
         objectMapper.registerModule(new SalesforceModule());
         converter.setObjectMapper(objectMapper);
         return converter;
-    }
+    }*/
 
     @Override
     protected void configureRestTemplate(RestTemplate restTemplate) {
@@ -116,7 +114,7 @@ public class SalesforceTemplate extends AbstractOAuth2ApiBinding implements Sale
             CollectionType listType = TypeFactory.defaultInstance().constructCollectionType(List.class, type);
             return (List<T>) objectMapper.readValue(jsonNode, listType);
         } catch (IOException e) {
-            throw new UncategorizedApiException("Error deserializing data from Salesforce: " + e.getMessage(), e);
+            throw new UncategorizedApiException("salesforce", "Error deserializing data from Salesforce: " + e.getMessage(), e);
         }
     }
 
@@ -125,7 +123,7 @@ public class SalesforceTemplate extends AbstractOAuth2ApiBinding implements Sale
         try {
             return (T) objectMapper.readValue(jsonNode, type);
         } catch (IOException e) {
-            throw new UncategorizedApiException("Error deserializing data from Salesforce: " + e.getMessage(), e);
+            throw new UncategorizedApiException("salesforce", "Error deserializing data from Salesforce: " + e.getMessage(), e);
         }
     }
 
